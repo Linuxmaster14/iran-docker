@@ -49,6 +49,18 @@ backup_resolv() {
     cp /etc/resolv.conf "/etc/resolv.conf.bak.$(date +%Y%m%d_%H%M%S)"
 }
 
+ping_proxy() {
+    local domain="$1"
+    local times=($(ping -c 3 -W 1 "$domain" 2>/dev/null | grep -oP 'time=\K[0-9.]+'))
+    
+    if [ ${#times[@]} -gt 0 ]; then
+        printf '%s\n' "${times[@]}" | sort -n | head -1
+    else
+        echo "timeout"
+    fi
+}
+
+
 # Set DNS servers based on user selection
 set_dns() {
     echo
