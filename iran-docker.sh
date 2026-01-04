@@ -179,33 +179,33 @@ update_docker() {
 
 # Find fastest proxy automatically
 find_fastest_proxy() {
-    echo -e "${CYAN}Testing proxies for best performance...${NC}"
+    echo -e "${CYAN}Testing proxies for best performance...${NC}" >&2
     
     local best_proxy=""
     local best_time="999999"
     
     for proxy in "${registry_proxies[@]}"; do
-        printf "Testing %s... " "$proxy"
+        printf "Testing %s... " "$proxy" >&2
         ping_time=$(ping_proxy "$proxy")
         
         if [[ "$ping_time" != "timeout" ]]; then
-            echo "${ping_time}ms"
-            # Compare ping times (convert to integer for comparison)
-            if (( $(echo "$ping_time < $best_time" | bc -l 2>/dev/null || echo "0") )); then
+            echo "${ping_time}ms" >&2
+            # Compare ping times using awk (standard on most systems) to handle floats
+            if (( $(awk -v p="$ping_time" -v b="$best_time" 'BEGIN {if (p < b) print 1; else print 0}') )); then
                 best_time="$ping_time"
                 best_proxy="$proxy"
             fi
         else
-            echo "timeout"
+            echo "timeout" >&2
         fi
     done
     
     if [[ -n "$best_proxy" ]]; then
-        echo
-        echo -e "${GREEN}Fastest proxy found:${NC} $best_proxy (${best_time}ms)"
+        echo >&2
+        echo -e "${GREEN}Fastest proxy found:${NC} $best_proxy (${best_time}ms)" >&2
         echo "$best_proxy"
     else
-        echo -e "${RED}No responsive proxies found${NC}"
+        echo -e "${RED}No responsive proxies found${NC}" >&2
         return 1
     fi
 }
