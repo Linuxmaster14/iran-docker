@@ -113,28 +113,28 @@ install_docker() {
 
     # Update package lists
     echo -e "${GREEN}Updating package lists...${NC}"
-    if ! apt-get update -qq >/dev/null 2>&1; then
+    if ! apt-get update; then
         echo -e "${RED}Error:${NC} Failed to update package lists."
         return 1
     fi
 
     # Upgrade system packages
     echo -e "${GREEN}Upgrading system packages...${NC}"
-    if ! apt-get upgrade -y -qq >/dev/null 2>&1; then
+    if ! apt-get upgrade -y; then
         echo -e "${RED}Error:${NC} Failed to upgrade packages."
         return 1
     fi
 
     # Install required dependencies
     echo -e "${GREEN}Installing required packages (curl)...${NC}"
-    if ! apt-get install -y -qq curl >/dev/null 2>&1; then
+    if ! apt-get install -y curl; then
         echo -e "${RED}Error:${NC} Failed to install prerequisites."
         return 1
     fi
 
     # Download and run Docker installation script
     echo -e "${GREEN}Downloading and installing Docker...${NC}"
-    if ! curl -fsSL https://get.docker.com | sh >/dev/null 2>&1; then
+    if ! curl -fsSL https://get.docker.com | sh; then
         echo -e "${RED}Error:${NC} Docker installation script failed."
         return 1
     fi
