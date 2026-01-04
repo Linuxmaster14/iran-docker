@@ -50,6 +50,7 @@ sudo ./iran-docker.sh
 * docker.iranserver.com
 * docker.mobinhost.com
 * hub.mecan.ir
+* docker.nrp.co
 * Auto-select fastest proxy (Benchmark)
 
 These proxies are applied to /etc/docker/daemon.json and the Docker service will be restarted automatically.
