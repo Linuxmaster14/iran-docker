@@ -42,6 +42,7 @@ registry_proxies=(
     "docker.iranserver.com"
     "docker.mobinhost.com"
     "hub.mecan.ir"
+	"docker.nrp.co"
 )
 
 # DNS Management Functions
