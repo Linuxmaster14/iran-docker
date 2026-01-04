@@ -7,6 +7,7 @@ A simple and powerful Bash script to simplify Docker usage on Iranian servers.
 * Easily switch between popular DNS providers (Shecan, Radar, Begzar, Google, etc.)
 * Automated Docker installation and setup
 * Apply Iranian Docker registry mirrors (ArvanCloud, Haiocloud, Iranserver, etc.)
+* Auto-select fastest Docker registry mirror
 * DNS auto-backup before changes
 * Support for Debian/Ubuntu systems
 
@@ -35,6 +36,7 @@ sudo ./iran-docker.sh
 * Begzar
 * DNSPro
 * 403
+* DynX
 * Google
 * Cloudflare
 
@@ -48,6 +50,7 @@ sudo ./iran-docker.sh
 * docker.iranserver.com
 * docker.mobinhost.com
 * hub.mecan.ir
+* Auto-select fastest proxy (Benchmark)
 
 These proxies are applied to /etc/docker/daemon.json and the Docker service will be restarted automatically.
 
