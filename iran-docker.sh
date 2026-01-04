@@ -49,6 +49,18 @@ backup_resolv() {
     cp /etc/resolv.conf "/etc/resolv.conf.bak.$(date +%Y%m%d_%H%M%S)"
 }
 
+ping_proxy() {
+    local domain="$1"
+    local times=($(ping -c 3 -W 1 "$domain" 2>/dev/null | grep -oP 'time=\K[0-9.]+'))
+    
+    if [ ${#times[@]} -gt 0 ]; then
+        printf '%s\n' "${times[@]}" | sort -n | head -1
+    else
+        echo "timeout"
+    fi
+}
+
+
 # Set DNS servers based on user selection
 set_dns() {
     echo
@@ -165,6 +177,39 @@ update_docker() {
     echo -e "${GREEN}Docker updated successfully. Version: $version${NC}"
 }
 
+# Find fastest proxy automatically
+find_fastest_proxy() {
+    echo -e "${CYAN}Testing proxies for best performance...${NC}"
+    
+    local best_proxy=""
+    local best_time="999999"
+    
+    for proxy in "${registry_proxies[@]}"; do
+        printf "Testing %s... " "$proxy"
+        ping_time=$(ping_proxy "$proxy")
+        
+        if [[ "$ping_time" != "timeout" ]]; then
+            echo "${ping_time}ms"
+            # Compare ping times (convert to integer for comparison)
+            if (( $(echo "$ping_time < $best_time" | bc -l 2>/dev/null || echo "0") )); then
+                best_time="$ping_time"
+                best_proxy="$proxy"
+            fi
+        else
+            echo "timeout"
+        fi
+    done
+    
+    if [[ -n "$best_proxy" ]]; then
+        echo
+        echo -e "${GREEN}Fastest proxy found:${NC} $best_proxy (${best_time}ms)"
+        echo "$best_proxy"
+    else
+        echo -e "${RED}No responsive proxies found${NC}"
+        return 1
+    fi
+}
+
 # Configure Docker to use Iranian registry mirrors
 set_docker_proxy() {
     echo
@@ -172,16 +217,26 @@ set_docker_proxy() {
     for i in "${!registry_proxies[@]}"; do
         echo "  $((i + 1))) https://${registry_proxies[$i]}"
     done
+    echo "  $((${#registry_proxies[@]} + 1))) Auto-select fastest proxy"
     echo "  0) Back"
     echo
-    read -rp "Select (0-${#registry_proxies[@]}): " proxy_choice
+    read -rp "Select (0-$((${#registry_proxies[@]} + 1))): " proxy_choice
 
     if [[ "$proxy_choice" == "0" ]]; then return; fi
-    if [[ ! "$proxy_choice" =~ ^[0-9]+$ ]] || (( proxy_choice < 1 || proxy_choice > ${#registry_proxies[@]} )); then
-        echo -e "${RED}Invalid option${NC}"; return
+    if [[ "$proxy_choice" == "$((${#registry_proxies[@]} + 1))" ]]; then
+        # Auto-select fastest proxy
+        fastest_output=$(find_fastest_proxy)
+        mirror=$(echo "$fastest_output" | tail -n1)
+        if [[ -z "$mirror" ]] || [[ "$mirror" == *"No responsive proxies found"* ]]; then
+            echo -e "${RED}Failed to find fastest proxy${NC}"
+            return
+        fi
+    else
+        if [[ ! "$proxy_choice" =~ ^[0-9]+$ ]] || (( proxy_choice < 1 || proxy_choice > ${#registry_proxies[@]} )); then
+            echo -e "${RED}Invalid option${NC}"; return
+        fi
+        mirror="${registry_proxies[$((proxy_choice - 1))]}"
     fi
-
-    mirror="${registry_proxies[$((proxy_choice - 1))]}"
     
     # Create Docker configuration directory
     mkdir -p /etc/docker
@@ -190,7 +245,13 @@ set_docker_proxy() {
     echo -e "{\n  \"registry-mirrors\": [\"https://$mirror\"]\n}" > /etc/docker/daemon.json
 
     # Restart Docker service to apply changes
-    systemctl restart docker
+    echo -e "${CYAN}Restarting Docker service...${NC}"
+    if systemctl restart docker; then
+        echo -e "${GREEN}Docker service restarted successfully${NC}"
+    else
+        echo -e "${RED}Warning:${NC} Docker service restart failed. Configuration saved but may need manual restart."
+        echo -e "${CYAN}Try running:${NC} sudo systemctl restart docker"
+    fi
 
     echo -e "${GREEN}Docker proxy set to:${NC} $mirror"
 }
