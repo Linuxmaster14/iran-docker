@@ -45,6 +45,8 @@ registry_proxies=(
     "docker.mobinhost.com"
     "hub.mecan.ir"
 	"docker.nrp.co"
+	"docker-mirror.liara.ir"
+	"ghcr-mirror.liara.ir"
 )
 
 # DNS Management Functions
