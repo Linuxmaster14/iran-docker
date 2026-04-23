@@ -49,6 +49,7 @@ registry_proxies=(
 	"ghcr-mirror.liara.ir"
 	"mirrors.pardisco.co"
 	"mirror2.chabokan.net"
+	"docker.abrha.net"
 )
 
 # DNS Management Functions
