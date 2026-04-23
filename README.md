@@ -31,11 +31,13 @@ sudo ./iran-docker.sh
 ## Supported DNS Providers
 
 * Shecan
+* Shecan Pro
 * Radar
 * Electro
 * Begzar
 * DNSPro
 * 403
+* Bertina
 * DynX
 * Google
 * Cloudflare
@@ -51,6 +53,11 @@ sudo ./iran-docker.sh
 * docker.mobinhost.com
 * hub.mecan.ir
 * docker.nrp.co
+* docker-mirror.liara.ir
+* ghcr-mirror.liara.ir
+* mirrors.pardisco.co
+* mirror2.chabokan.net
+* docker.abrha.net
 * Auto-select fastest proxy (Benchmark)
 
 These proxies are applied to /etc/docker/daemon.json and the Docker service will be restarted automatically.
