@@ -58,6 +58,7 @@ sudo ./iran-docker.sh
 * mirrors.pardisco.co
 * mirror2.chabokan.net
 * docker.abrha.net
+* mirror-docker.runflare.com
 * Auto-select fastest proxy (Benchmark)
 
 These proxies are applied to /etc/docker/daemon.json and the Docker service will be restarted automatically.

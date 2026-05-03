@@ -50,6 +50,7 @@ registry_proxies=(
 	"mirrors.pardisco.co"
 	"mirror2.chabokan.net"
 	"docker.abrha.net"
+	"mirror-docker.runflare.com"
 )
 
 # DNS Management Functions
