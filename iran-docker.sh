@@ -229,7 +229,7 @@ set_docker_proxy() {
     done
     echo "  0) Back"
     echo
-    read -rp "Select (0-$((${#registry_proxies[@]} + 1))): " proxy_choice
+    read -rp "Select (0=Back, 00=Auto, 1-${#registry_proxies[@]}): " proxy_choice
 
     if [[ "$proxy_choice" == "0" ]]; then return; fi
     if [[ "$proxy_choice" == "00" ]]; then
