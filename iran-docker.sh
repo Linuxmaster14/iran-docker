@@ -18,14 +18,16 @@ fi
 main_menu_items=("Set DNS" "Install Docker" "Update Docker" "Set Docker Proxy" "Exit")
 
 # Available DNS providers and their servers
-dns_options=("Shecan" "Radar" "Electro" "Begzar" "DNSPro" "403" "DynX" "Google" "Cloudflare" "Reset to Default")
+dns_options=("Shecan" "Shecan Pro" "Radar" "Electro" "Begzar" "DNSPro" "403" "Bertina" "DynX" "Google" "Cloudflare" "Reset to Default")
 declare -A dns_servers=(
     ["Shecan"]="178.22.122.100 185.51.200.2"
+	["Shecan Pro"]="178.22.122.101 185.51.200.1"
     ["Radar"]="10.202.10.10 10.202.10.11"
     ["Electro"]="78.157.42.100 78.157.42.101"
     ["Begzar"]="185.55.226.26 185.55.226.25"
     ["DNSPro"]="87.107.110.109 87.107.110.110"
     ["403"]="10.202.10.202 10.202.10.102"
+	["Bertina"]="193.186.32.32"
 	["DynX"]="10.70.95.150 10.70.95.162"
     ["Google"]="8.8.8.8 8.8.4.4"
     ["Cloudflare"]="1.1.1.1 1.0.0.1"
@@ -43,6 +45,12 @@ registry_proxies=(
     "docker.mobinhost.com"
     "hub.mecan.ir"
 	"docker.nrp.co"
+	"docker-mirror.liara.ir"
+	"ghcr-mirror.liara.ir"
+	"mirrors.pardisco.co"
+	"mirror2.chabokan.net"
+	"docker.abrha.net"
+	"mirror-docker.runflare.com"
 )
 
 # DNS Management Functions
@@ -215,16 +223,16 @@ find_fastest_proxy() {
 set_docker_proxy() {
     echo
     echo -e "${CYAN}Select Docker Registry Mirror:${NC}"
+    echo "  00) Auto-select fastest proxy"
     for i in "${!registry_proxies[@]}"; do
         echo "  $((i + 1))) https://${registry_proxies[$i]}"
     done
-    echo "  $((${#registry_proxies[@]} + 1))) Auto-select fastest proxy"
     echo "  0) Back"
     echo
     read -rp "Select (0-$((${#registry_proxies[@]} + 1))): " proxy_choice
 
     if [[ "$proxy_choice" == "0" ]]; then return; fi
-    if [[ "$proxy_choice" == "$((${#registry_proxies[@]} + 1))" ]]; then
+    if [[ "$proxy_choice" == "00" ]]; then
         # Auto-select fastest proxy
         fastest_output=$(find_fastest_proxy)
         mirror=$(echo "$fastest_output" | tail -n1)
