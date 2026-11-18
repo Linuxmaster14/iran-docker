@@ -51,6 +51,7 @@ registry_proxies=(
 	"mirror2.chabokan.net"
 	"docker.abrha.net"
 	"mirror-docker.runflare.com"
+	"hub.cr.parmincloud.ir"
 )
 
 # DNS Management Functions
